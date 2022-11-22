@@ -40,7 +40,6 @@ const Box = () => {
 
   return (
     <mesh
-      ref={ref}
       onPointerOver={() => setIsHovered(true)}
       onPointerOut={() => setIsHovered(false)}
     >

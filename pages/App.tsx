@@ -3,15 +3,22 @@ import { useState, useRef, useEffect } from "react";
 import { Canvas, MeshProps, useFrame, useThree } from "@react-three/fiber";
 import { Physics, useSphere } from '@react-three/cannon';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import THREE from 'three';
 import { TextureLoader } from "three/src/loaders/TextureLoader";
 import { MeshBasicMaterial } from "three/src/materials/MeshBasicMaterial";
+import { Mesh } from 'three';
 
 const Box = () => {
-  const ref = useRef<MeshProps>(null);
+  const ref = useRef<Mesh>(null);
   //const [ref, api] = useSphere(() => ({ args: [1.2], mass: 1, material: { restitution: 0.95 } }))
   const [isHovered, setIsHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState();
+
+  useFrame(() =>{
+    if(ref && ref.current){
+      ref.current.rotation.x += 0.01;
+      ref.current.rotation.y += 0.01;
+    }
+  })
 
   const loader = new TextureLoader();
   const materials = [
@@ -25,6 +32,7 @@ const Box = () => {
 
   return (
     <mesh
+      ref = {ref}
       onPointerOver={() => setIsHovered(true)}
       onPointerOut={() => setIsHovered(false)}
       material={materials}
@@ -38,10 +46,17 @@ const Box = () => {
 
 
 const Box2 = () => {
-  const ref = useRef<MeshProps>(null);
+  const ref = useRef<Mesh>(null);
   //const [ref, api] = useSphere(() => ({ args: [1.2], mass: 1, material: { restitution: 0.95 } }))
   const [isHovered, setIsHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState();
+
+  useFrame(() =>{
+    if(ref && ref.current){
+      ref.current.rotation.x += 0.01;
+      ref.current.rotation.y += 0.01;
+    }
+  })
 
   const loader = new TextureLoader();
   const materials = [
@@ -54,6 +69,7 @@ const Box2 = () => {
   ];
   return (
     <mesh
+      ref={ref}
       onPointerOver={() => setIsHovered(true)}
       onPointerOut={() => setIsHovered(false)}
       material={materials}

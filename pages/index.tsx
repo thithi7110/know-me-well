@@ -1,7 +1,9 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Link from 'next/link'
+// import styles from '../styles/Home.module.css'
 import App from './App'
+
 
 export default function Home() {
   return (
@@ -33,7 +35,11 @@ export default function Home() {
     // </div>
 
     <>
-      <App/>
+      <div className="container mx-auto columns-auto">
+        <Link href="/Demo">Demo</Link>
+        <App />
+
+      </div>
     </>
   )
 }

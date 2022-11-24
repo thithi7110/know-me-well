@@ -3,8 +3,8 @@ import Link from 'next/link';
 import React, { MouseEventHandler, ReactNode, useCallback, useState } from 'react';
 import style from 'styles/App.module.css'
 import { Vector3 } from 'three';
-import Box from './Box';
-import MyCanvas from './MyCanvas';
+import Box from '../components/Box';
+import MyCanvas from '../components/MyCanvas';
 
 
 const Img = (props: { id: string, imgsrc: string, onClick: (event: React.MouseEvent<HTMLInputElement>, id: string, imagedata: string | ArrayBuffer | null) => void, imgalt?: string }) => {

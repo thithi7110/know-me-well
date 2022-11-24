@@ -1,13 +1,8 @@
 import style from '../styles/App.module.css'
-import { useState, useRef, useEffect, ReactNode } from "react";
-import { Canvas, MeshProps, useFrame, useThree } from "@react-three/fiber";
-import { Physics, useSphere } from '@react-three/cannon';
+import { useEffect, ReactNode } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
+import { Physics } from '@react-three/cannon';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import { TextureLoader } from "three/src/loaders/TextureLoader";
-import { MeshBasicMaterial } from "three/src/materials/MeshBasicMaterial";
-import { Mesh, Vector3 } from 'three';
-import Link from 'next/link';
-import Box from './Box';
 
 const CameraController = () => {
   const { camera, gl } = useThree();

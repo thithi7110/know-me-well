@@ -7,7 +7,6 @@ import { TextureLoader } from "three/src/loaders/TextureLoader";
 import { MeshBasicMaterial } from "three/src/materials/MeshBasicMaterial";
 import { Mesh, Texture, Vector3 } from 'three';
 import { promises } from 'stream';
-
 // type BoxProps = {
 //   imageData?: string[],
 //   imageUrls?: string[],

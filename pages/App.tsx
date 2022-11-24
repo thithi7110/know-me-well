@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { MouseEventHandler, ReactNode, useCallback, useState } from 'react';
 import style from 'styles/App.module.css'
@@ -69,7 +70,7 @@ const Img = (props: { id: string, imgsrc: string, onClick: (event: React.MouseEv
 
         <label className="flex rounded-sm cursor-pointer focus:outline-none
            hover:bg-gray-50 peer-checked:ring-green-500 peer-checked:ring-2 peer-checked:border-transparent
-           " htmlFor={props.id}><img className="rounded-sm" id={"img_" + props.id} src={props.imgsrc} alt={props.imgalt} /></label>
+           " htmlFor={props.id}><img className="rounded-sm" id={"img_" + props.id} src={props.imgsrc} alt={props.imgalt ? props.imgalt : ""} /></label>
 
         <div className="absolute hidden w-5 h-5 peer-checked:block top-1 left-1">
           ✅
@@ -198,7 +199,7 @@ export default function App() {
           let imagedata: string[] = [];
           b.datas.map((r) => {
             imagedata.push(String(r.data));
-            console.log(r.data)
+            
           })
 
           let box =
@@ -239,8 +240,8 @@ export default function App() {
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
         onClick={onClickBox2}
       >追加</button>
-      <MyCanvas children={box} />
-      <MyCanvas children={box2} />
+      <MyCanvas>{box}</MyCanvas>
+      <MyCanvas>{box2}</MyCanvas>
     </>
   );
 }

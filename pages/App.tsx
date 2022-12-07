@@ -1,6 +1,7 @@
+import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { MouseEventHandler, ReactNode, useCallback, useState } from 'react';
+import React, { MouseEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import style from 'styles/App.module.css'
 import { Vector3 } from 'three';
 import Box from '../components/Box';
@@ -86,17 +87,76 @@ export default function App() {
 
   const [box, setBox] = useState<ReactNode>();
   const [box2, setBox2] = useState<ReactNode>();
+  const [isLoading,setIsLoading] = useState<boolean>(false);
+  const USER_ID = "100001";
+
+  type Favorite = {
+    id: string,
+    userid: string,
+    imageinfo: {
+      datapaths: string[],
+      position: string[],
+      size?: string[],
+      tag: string,
+      datas: string[],
+      updflg: number
+    }
+  }
 
   type ImageInfo = {
     imageName: string,
     data: string | ArrayBuffer | null
   }
-  type ImageInfo2 = {
-    datas: ImageInfo[],
-    position: Vector3
-  }
+  // type ImageInfo2 = {
+  //   userid: string,
+  //   datas: ImageInfo[],
+  //   position: Vector3,
+  //   size?:number[],
+  //   updflg:number,
+  //   tag:string
+  // }
   const [selectedImgs, setSelectedImgs] = useState<ImageInfo[]>([]);
-  const [selectedImgs2, setSelectedImgs2] = useState<Array<ImageInfo2>>([]);
+  const [favorites, setFavorites] = useState<Array<Favorite>>([]);
+
+  useEffect(() => {
+    //初回ロード時にデータ読み込み
+    setIsLoading(true);
+    axios.get(process.env.NEXT_PUBLIC_APIBASEURL+"/favorites/" + USER_ID).then((res) => {
+
+      let wkFavorites: Array<Favorite> = [];
+      //
+      // for (let i = 0; i < res.data.favorites.length; i++) {
+      res.data.map((favorite: Favorite) => {
+        wkFavorites.push({
+          id: favorite.id,
+          userid: favorite.userid,
+          imageinfo: {
+            datapaths: favorite.imageinfo.datapaths,
+            position: favorite.imageinfo.position,
+            size: favorite.imageinfo.size,
+            tag: favorite.imageinfo.tag,
+            datas: favorite.imageinfo.datas,
+            updflg: 1
+          }
+        });
+      })
+
+      setFavorites(wkFavorites);
+
+      if (wkFavorites) {
+        setBox2(
+          wkFavorites.map(b => {
+            let box =
+              <Box imageData={b.imageinfo.datas} position={new Vector3(Number(b.imageinfo.position[0]),Number(b.imageinfo.position[1]),Number(b.imageinfo.position[2]))} size={[2, 2, 2]} />
+
+            return box;
+          })
+        )
+      }
+
+      setIsLoading(false);
+    });
+  }, [])
 
   //const onClick = useCallback((e:React.MouseEvent<HTMLInputElement>,id:string) => {
   const onClick = useCallback((e: React.MouseEvent<HTMLInputElement>, id: string, imagedata: string | ArrayBuffer | null) => {
@@ -107,19 +167,14 @@ export default function App() {
       (prevSelectedImgs) => {
         let wkselectedImgs = [...prevSelectedImgs];
         if ((e.target as HTMLInputElement).checked) {
-          wkselectedImgs.push({ imageName: id, data: imagedata });
-
+          wkselectedImgs.push({imageName:id,data:imagedata});
           count = wkselectedImgs.length;
-
-          wkselectedImgs = [...wkselectedImgs]
         } else {
+          //選択が外されたら選択一覧から削除する
           count = wkselectedImgs.length;
-
           wkselectedImgs = [...wkselectedImgs.filter((v) => v.imageName != id)]
         }
 
-        //6面揃ったらBox作成
-        // if (count > 5) {
         {
           let imagedata: string[] = [];
           wkselectedImgs.map((r) => {
@@ -135,8 +190,6 @@ export default function App() {
 
         return wkselectedImgs;
       });
-
-
 
   }, [selectedImgs]);
 
@@ -175,35 +228,63 @@ export default function App() {
 
     getImages();
   }
-  const getRandomInt = (max:number) => {
+  const getRandomInt = (max: number) => {
     return Math.floor(Math.random() * max);
   }
 
-  const onClickBox2 = () => {
-    let wkselectedImgs2: Array<ImageInfo2> = [];
-    if (selectedImgs2) {
-      wkselectedImgs2 = selectedImgs2;
-      
-      wkselectedImgs2.push({datas:selectedImgs,position:new Vector3(getRandomInt(10),getRandomInt(10),getRandomInt(10))});
+  const onClickAddBox = () => {
+    let wkFavorites:Array<Favorite> = [];
+
+    //作成したFavorite
+    let wkdatas = selectedImgs.map((r:ImageInfo)=>{
+        if(!!r.data && typeof r.data == 'string') 
+          return r.data 
+        else return ''})
+
+    //追加する
+    if (favorites) {
+      wkFavorites = favorites;
+
+      wkFavorites.push({
+        id: "",
+        userid: USER_ID,
+        imageinfo: {
+          datapaths: [],
+          position: [String(getRandomInt(10)), String(getRandomInt(10)), String(getRandomInt(10))],
+          size: [],
+          tag: "new add",
+          datas: wkdatas,
+          updflg: 0
+        }
+      })
     }
     else {
-      wkselectedImgs2.push({datas:selectedImgs,position:new Vector3(0,0,0)});
+      wkFavorites.push({
+        id: "",
+        userid: USER_ID,
+        imageinfo: {
+          datapaths: [],
+          position: ["0","0", "0"],
+          size: [],
+          tag: "new add",
+          datas: wkdatas,
+          updflg: 0
+        }
+      })
     }
-    setSelectedImgs2(wkselectedImgs2);
+    setFavorites(wkFavorites);
 
-    if (wkselectedImgs2) {
+    if (wkFavorites) {
       setBox2(
-        wkselectedImgs2.map(b => {
-
-
+        wkFavorites.map(b => {
           let imagedata: string[] = [];
-          b.datas.map((r) => {
-            imagedata.push(String(r.data));
-            
+          b.imageinfo.datas.map((r) => {
+            imagedata.push(String(r));
+
           })
 
           let box =
-            <Box imageData={imagedata} position={b.position} size={[2, 2, 2]} />
+            <Box imageData={imagedata} position={new Vector3(Number(b.imageinfo.position[0]),Number(b.imageinfo.position[1]),Number(b.imageinfo.position[2]))} size={[2, 2, 2]} />
 
           return box;
 
@@ -212,10 +293,29 @@ export default function App() {
     }
   }
 
+  const onClickUpdate = () => {
+    //更新処理
+    console.log(favorites.filter((item) => {
+      return item.imageinfo.updflg == 0
+    }));
+
+    let imgs = favorites.filter((item) => {
+      return item.imageinfo.updflg == 0
+    });
+
+    let updata_obj = favorites
+    let updata_obj2 = {favorites:updata_obj};
+
+    axios.post(process.env.NEXT_PUBLIC_APIBASEURL+"/favorites", updata_obj2).then((res) => {
+      console.log("POST処理成功");
+    })
+
+  }
+
 
   return (
     <>
-      <div className='bg-red-500'>
+      <div className='bg-gradient-to-t from-blue-400 to-blue-600'>
         <p><Link href="/">Top</Link></p>
         <br />
         <h1 className='text-2xl' >Know Me Well!</h1>
@@ -238,9 +338,13 @@ export default function App() {
 
       </div>
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-        onClick={onClickBox2}
+        onClick={onClickAddBox}
       >追加</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+        onClick={onClickUpdate}
+      >更新</button>
       <MyCanvas>{box}</MyCanvas>
+      <p className={isLoading ? 'visible' : 'hidden'}>loading...</p>
       <MyCanvas>{box2}</MyCanvas>
     </>
   );

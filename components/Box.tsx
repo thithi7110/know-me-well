@@ -7,45 +7,6 @@ import { TextureLoader } from "three/src/loaders/TextureLoader";
 import { MeshBasicMaterial } from "three/src/materials/MeshBasicMaterial";
 import { Mesh, Texture, Vector3 } from 'three';
 import { promises } from 'stream';
-// type BoxProps = {
-//   imageData?: string[],
-//   imageUrls?: string[],
-//   size?: Vector3,
-//   position?: Vector3,
-// }
-
-// export default function Box(props: BoxProps) {
-//   const ref = useRef<Mesh>(null);
-//   const [isHovered, setIsHovered] = useState(false);
-
-//   useFrame(() => {
-//     if (ref && ref.current) {
-//       ref.current.rotation.x += 0.01;
-//       ref.current.rotation.y += 0.01;
-//     }
-//   })
-
-//   const loader = new TextureLoader();
-//   const materials: MeshBasicMaterial[] = [];
-
-//   props.imageData?.forEach(data => {
-//     materials.push(new MeshBasicMaterial({ map: loader.load(data) }));
-//   });
-
-//   return (
-//     <mesh
-//       ref={ref}
-//       onPointerOver={() => setIsHovered(true)}
-//       onPointerOut={() => setIsHovered(false)}
-//       material={materials}
-//       position={props.position ? props.position : [0,0,0]}
-//     >
-//       <camera></camera>
-//       <boxBufferGeometry args={props.size ? props.size : [1.5,1.5,1.5]} />
-//       <meshLambertMaterial color={"black"}/>
-//     </mesh>
-//   );
-// };
 
 type BoxProps = {
   imageData?: string[],
